@@ -47,83 +47,22 @@ app.add_middleware(
 
 )
 
-
 @app.post("/upload")
-
-async def upload(
-
-file: UploadFile
-
-= File(...)
-
-):
-
-
-    contents = (
-
-        await file.read()
-
-    )
-
-
-    text = (
-
-        extract_text(
-
-            contents
-
-        )
-
-    )
-
-
-    print(
-
-        "\nTEXT:\n",
-
-        text[:1000]
-
-    )
-
-
-    chunks = (
-
-        chunk_text(
-
-            text
-
-        )
-
-    )
-
-
-    print(
-
-        "\nCHUNKS:\n",
-
-        chunks[:2]
-
-    )
-
-
-    store_chunks(
-
-        chunks
-
-    )
-
+async def upload(files: list[UploadFile] = File(...)):
+    total_chunks = 0
+    for file in files:
+        contents = await file.read()
+        text = extract_text(contents)
+        chunks = chunk_text(text)
+        store_chunks(chunks)
+        total_chunks += len(chunks)
 
     return {
-
-        "text_length":
-
-        len(text),
-
-        "chunks":
-
-        len(chunks)
-
+        "status": "stored",
+        "chunks": total_chunks,
+        "files": len(files)
     }
+
 
 from services.retriever import retrieve
 

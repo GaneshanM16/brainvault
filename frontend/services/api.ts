@@ -1,12 +1,21 @@
-const API =
+const API=
+
+process.env
+
+.NEXT_PUBLIC_API_URL
+
+||
 
 "http://127.0.0.1:8000"
 
 
 
+
 export async function uploadFile(
 
-file: File
+files:
+
+File[]
 
 ){
 
@@ -14,14 +23,19 @@ const form=
 
 new FormData()
 
+files.forEach(
+
+file=>
+
 form.append(
 
-"file",
+"files",
 
 file
 
 )
 
+)
 
 const response=
 
@@ -43,12 +57,9 @@ form
 
 )
 
-
 return (
 
-response
-
-.json()
+response.json()
 
 )
 
